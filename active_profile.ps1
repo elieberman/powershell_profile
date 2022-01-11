@@ -39,8 +39,9 @@ function prompt {
 } #end prompt function
 
 
+
 # Custom functions
-function ifp { $global:fpumps = import-csv c:\users\liebe.sa\documents\github\724status\dat\fpumps.csv }
+function ifp {  $global:fpumps = import-csv "$($home)\documents\github\724status\dat\fpumps.csv" }
 
 function copyto {$sessionJob = new-pssession -ComputerName $args[0] ; invoke-command $sessionjob -scriptblock {mkdir c:\temp} ; copy $args[1] c:\temp -tosession $sessionjob}
 
@@ -73,3 +74,12 @@ set-alias -Name rj  -Value all_job_output
 set-alias -Name cp2 -Value copyto
 set-alias -Name ep  -Value enter-pssession
 set-alias -Name expl -Value explore_here
+
+
+#Future implementation
+
+<#
+$userwhoami = $($(whoami) -split '\\')[1] ;
+
+
+#>
