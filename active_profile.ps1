@@ -37,3 +37,39 @@ function prompt {
     Write-Host "[$elapsedTime] " -NoNewline -ForegroundColor Green
     return "> "
 } #end prompt function
+
+
+# Custom functions
+function ifp { $global:fpumps = import-csv c:\users\liebe.sa\documents\github\724status\dat\fpumps.csv }
+
+function copyto {$sessionJob = new-pssession -ComputerName $args[0] ; invoke-command $sessionjob -scriptblock {mkdir c:\temp} ; copy $args[1] c:\temp -tosession $sessionjob}
+
+function explore_here {
+explorer $pwd.path
+}
+
+function 724_install {
+invoke-command $args[0] -scriptblock {
+ c:\724Access\cygwin\bin\bash.exe --login -c "cygrunsrv --stop d7a_sshd"
+ c:\724Access\cygwin\bin\bash.exe --login -c "cygrunsrv --remove d7a_sshd"
+if ($using:args[1]){
+Expand-Archive -path C:\temp\"$($using:args[1])".zip -DestinationPath $env:temp\ -force
+}
+else{
+Expand-Archive -path C:\temp\UHSPA7241*.zip -DestinationPath $env:temp\ -force
+}
+cd $env:temp
+$(gci vc*).name | %{ &.\$_ /quiet /norestart}
+Set-ExecutionPolicy RemoteSigned
+ &$env:temp\7x24DTVinstall.ps1
+} -asjob
+}
+function all_job_output {
+receive-job * -keep
+}
+# Custom Aliases
+set-alias -Name gj  -Value Get-job
+set-alias -Name rj  -Value all_job_output
+set-alias -Name cp2 -Value copyto
+set-alias -Name ep  -Value enter-pssession
+set-alias -Name expl -Value explore_here
